@@ -15,10 +15,12 @@ This is my Selenium Python 101 Assignment for LambdaTest Certification.
 - I am using Actionchain to handle drag and drop, etc.
 - I am using Faker library to generate random dynamic value
 
-## About Me
-- Name : Prayogo Dewantoro
-- Nick Name: Yogo
-- Current Occupation: Quality Assurance Engineer
+## Pre-requisites
+- have latest version of python installed
+- have latest version of pip installed
+- pip install selenium==4.9.0 
+- pip install pytest
+- pip install faker
 
 ## How to change browser and platform
 1. go to config.json
@@ -30,3 +32,7 @@ e.g:
 ```bash
 pytest -v -s test_seleniumPython101.py
 ```
+## About Me
+- Name : Prayogo Dewantoro
+- Nick Name: Yogo
+- Current Occupation: Quality Assurance Engineer
