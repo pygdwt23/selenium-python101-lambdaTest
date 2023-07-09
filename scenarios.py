@@ -7,7 +7,6 @@ from selenium.webdriver.common.action_chains import ActionChains
 from faker import Faker
 import time
 import pytest
-import unittest
 import logging
 import os
 
@@ -24,7 +23,7 @@ class TestScenarios:
         print("01. SCENARIO 001 IS RUNNING")
     # Step 1 - Click “Simple Form Demo” under Input Forms.
         WebDriverWait(self.driver, 60).until(EC.element_to_be_clickable((By.XPATH, "//a[.='Simple Form Demo']"))).click()
-
+ 
     # Step 2 - Validate that the URL contains “simple-form-demo”.
         get_url = self.driver.current_url
         print("URL: %s" %get_url)
@@ -67,10 +66,12 @@ class TestScenarios:
 
     # Step 2 - Select the slider “Default value 15” and drag the bar to make it 95 by validating whether the range value shows 95.
         source = self.driver.find_element(By.XPATH, "//input[@value='15']")
+
         self.action.drag_and_drop_by_offset(source, 215, 0).perform()
         time.sleep(5)
 
         rangeSuccess = self.driver.find_element(By.XPATH, "//output[@id='rangeSuccess']").text
+        print("Range = %s" %rangeSuccess)
         expectedRange = 95
         assert int(rangeSuccess) == expectedRange
         self.driver.get_screenshot_as_file("scenario002.png")
@@ -96,7 +97,7 @@ class TestScenarios:
 
     # Step 3 - Assert “Please fill in the fields” error message.
         errorMsg = self.driver.find_element(By.XPATH, "//input[@id='name']").get_attribute(name="validationMessage")
-        if errorMsg in ["Fill out this field", "Please fill out this field."]:
+        if errorMsg in ["Fill out this field", "Please fill out this field.", "This is a required field"]:
             assert True
         else:
             assert False
@@ -119,6 +120,7 @@ class TestScenarios:
         WebDriverWait(self.driver, 60).until(EC.element_to_be_clickable((By.XPATH, "//input[@id='inputCity']"))).send_keys(fake.city())
         WebDriverWait(self.driver, 60).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[placeholder='Address 1']"))).send_keys(fake.address())
         WebDriverWait(self.driver, 60).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[placeholder='Address 2']"))).send_keys(fake.address())
+        WebDriverWait(self.driver, 60).until(EC.element_to_be_clickable((By.XPATH, "//input[@id='inputState']"))).send_keys(fake.country())
         WebDriverWait(self.driver, 60).until(EC.element_to_be_clickable((By.XPATH, "//input[@id='inputZip']"))).send_keys(fake.postcode())
         self.driver.get_screenshot_as_file("scenario003_c.png")
         time.sleep(5)
