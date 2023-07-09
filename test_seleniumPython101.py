@@ -1,9 +1,15 @@
 import pytest
 import logging
-from scenarios import scenariosDef
+from scenarios import TestScenarios
 
-def testscenarios(conftest):
-    sc = scenariosDef(conftest)
-    sc.test_001()
-    sc.test_002()
-    sc.test_003()
+def testscenario001(conftest):
+    sc001 = TestScenarios(conftest)
+    sc001.test_001()
+
+def testscenario002(conftest):
+    sc002 = TestScenarios(conftest)
+    sc002.test_002()
+
+def testscenario003(conftest):
+    sc003 = TestScenarios(conftest)
+    sc003.test_003()

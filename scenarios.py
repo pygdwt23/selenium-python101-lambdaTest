@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from faker import Faker
 import time
+import pytest
 import unittest
 import logging
 import os
@@ -13,7 +14,11 @@ import os
 
 fake = Faker()
 
-class scenariosDef ():
+class TestScenarios:
+    def __init__(self, driver):
+        self.driver = driver
+        self.action = ActionChains(self.driver)
+
     def test_001(self):
         print("=============================================================================================================================")
         print("01. SCENARIO 001 IS RUNNING")
@@ -41,9 +46,9 @@ class scenariosDef ():
 
     # Step 6 - Validate whether the same text message is displayed in the right-hand panel under the “Your Message:” section.
         righHandPanel = WebDriverWait(self.driver, 60).until(EC.element_to_be_clickable((By.XPATH, "//p[@id='message']"))).text
-        self.assertEqual(your_message, righHandPanel)
+        assert your_message == righHandPanel
         print("EXPECTED: %s" %your_message, "ACTUAL: %s" %righHandPanel)
-        self.driver.get_screenshot_as_file("CatalinaSafari_scenario001.png")
+        self.driver.get_screenshot_as_file("scenario001.png")
         print("scenario001.png is captured succesfully")
         time.sleep(5)
         if self.driver.find_element(By.XPATH, "//p[@id='message']").is_displayed:
@@ -52,6 +57,7 @@ class scenariosDef ():
         else:
             self.driver.execute_script("lambda-status=failed")
             print("lambda-status=failed")
+        self.driver.close()
 
     def test_002(self):
         print("=============================================================================================================================")
@@ -66,8 +72,8 @@ class scenariosDef ():
 
         rangeSuccess = self.driver.find_element(By.XPATH, "//output[@id='rangeSuccess']").text
         expectedRange = 95
-        self.assertEqual(int(rangeSuccess), expectedRange)
-        self.driver.get_screenshot_as_file("CatalinaSafari_scenario002.png")
+        assert int(rangeSuccess) == expectedRange
+        self.driver.get_screenshot_as_file("scenario002.png")
         print("scenario002.png is captured succesfully")
         print("EXPECTED: %s" %expectedRange, "ACTUAL: %s" %rangeSuccess)
         if self.driver.find_element(By.XPATH,"//output[@id='rangeSuccess']").is_displayed:
@@ -76,6 +82,8 @@ class scenariosDef ():
         else:
             self.driver.execute_script("lambda-status=failed")
             print("lambda-status=failed")
+        self.driver.close()
+        
 
     def test_003(self):
         print("=============================================================================================================================")
@@ -88,10 +96,12 @@ class scenariosDef ():
 
     # Step 3 - Assert “Please fill in the fields” error message.
         errorMsg = self.driver.find_element(By.XPATH, "//input[@id='name']").get_attribute(name="validationMessage")
-        expectedErrorMsg in ["Fill out this field", "Please fill out this field."]
-        self.assertEqual(errorMsg, expectedErrorMsg)
+        if errorMsg in ["Fill out this field", "Please fill out this field."]:
+            assert True
+        else:
+            assert False
         print(errorMsg)
-        self.driver.get_screenshot_as_file("CatalinaSafari_scenario003_a.png")
+        self.driver.get_screenshot_as_file("scenario003_a.png")
         time.sleep(5)
 
     # Step 4 - Fill in Name, Email, and other fields.
@@ -104,27 +114,29 @@ class scenariosDef ():
     # Step 5 - From the Country drop-down, select “United States” using the text property.
         countrySelect = Select(self.driver.find_element(By.XPATH, "//select[@name='country']"))
         countrySelect.select_by_value("US")
-        self.driver.get_screenshot_as_file("CatalinaSafari_scenario003_b.png")
+        self.driver.get_screenshot_as_file("scenario003_b.png")
 
         WebDriverWait(self.driver, 60).until(EC.element_to_be_clickable((By.XPATH, "//input[@id='inputCity']"))).send_keys(fake.city())
         WebDriverWait(self.driver, 60).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[placeholder='Address 1']"))).send_keys(fake.address())
         WebDriverWait(self.driver, 60).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[placeholder='Address 2']"))).send_keys(fake.address())
         WebDriverWait(self.driver, 60).until(EC.element_to_be_clickable((By.XPATH, "//input[@id='inputZip']"))).send_keys(fake.postcode())
-        self.driver.get_screenshot_as_file("CatalinaSafari_scenario003_c.png")
+        self.driver.get_screenshot_as_file("scenario003_c.png")
         time.sleep(5)
     # Step 6 - Fill all fields and click “Submit”.
         WebDriverWait(self.driver, 60).until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='Submit']"))).click()
 
     # Step 7 - Once submitted, validate the success message “Thanks for contacting us, we will get back to you shortly.” on the screen.
         time.sleep(5)
-        self.driver.get_screenshot_as_file("CatalinaSafari_scenario003_d.png")
+        self.driver.get_screenshot_as_file("scenario003_d.png")
         if WebDriverWait(self.driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//p[@class='success-msg hidden']"))).is_displayed():
             successMsg = self.driver.find_element(By.XPATH, "//p[@class='success-msg hidden']").text
             print(successMsg)
             expectedSuccessMsg = "Thanks for contacting us, we will get back to you shortly."
-            self.assertEqual(expectedSuccessMsg, successMsg)
+            assert expectedSuccessMsg == successMsg
             self.driver.execute_script("lambda-status=passed")
             print("lambda-status=passed")
         else:
             self.driver.execute_script("lambda-status=failed")
             print("lambda-status=failed")
+        self.driver.close()
+        
